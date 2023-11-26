@@ -5,6 +5,7 @@
     <title>Regisztráció</title>
     <link rel="stylesheet" href="style.css"/>
 </head>
+
 <body>
 
 <?php
@@ -51,6 +52,11 @@ if (isset($_POST['submit'])) {
     }
 } else {
 ?>
+
+
+// innentől frontend
+
+
     <form class="form" action="" method="post">
         <h1 class="login-title">Regisztráció</h1>
         <input type="text" class="login-input" name="username" placeholder="Username" required />
