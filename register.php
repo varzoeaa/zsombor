@@ -2,62 +2,68 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>Registration</title>
+    <title>Regisztráció</title>
     <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+
 <?php
-    require('.php');    // valami file amiben benne van a code a csatlakozáshoz a dbhez
+require('db_connect.php');
 
-    if (isset($_REQUEST['username'])) {
-        $username = stripslashes($_REQUEST['username']);
-        $username = mysqli_real_escape_string($con, $username);
-        $email    = stripslashes($_REQUEST['email']);
-        $email    = mysqli_real_escape_string($con, $email);
-        $password = stripslashes($_REQUEST['password']);
-        $password = mysqli_real_escape_string($con, $password);
-        $confirm_password = stripslashes($_REQUEST['confirm_password']);
-        $confirm_password = mysqli_real_escape_string($con, $confirm_password);
+if (isset($_POST['submit'])) {
+    $felh_nev = stripslashes($_POST['username']);
+    $felh_nev = mysqli_real_escape_string($con, $felh_nev);
+    $email    = stripslashes($_POST['email']);
+    $email    = mysqli_real_escape_string($con, $email);
+    $password = stripslashes($_POST['password']);
+    $password = mysqli_real_escape_string($con, $password);
+    $confirm_password = stripslashes($_POST['confirm_password']);
+    $confirm_password = mysqli_real_escape_string($con, $confirm_password);
 
-        // matchelő jelszó
-        if ($password == $confirm_password) {
-            $create_datetime = date("Y-m-d H:i:s");
-            $hashed_password = md5($password);
+    // megnézi, hogy matchelnek-e a jelszavak
+    if ($password == $confirm_password) {
+        $create_datetime = date("Y-m-d H:i:s");
+        $hashed_password = md5($password);
 
-            $query = "INSERT into `users` (username, password, email, create_datetime)
-                      VALUES ('$username', '$hashed_password', '$email', '$create_datetime')";
-            $result = mysqli_query($con, $query);
+        // megnézi, hogy a checkbox rendben van-e
+        $admin = isset($_POST['admin']) ? 1 : 0;
 
-            if ($result) {
-                echo "<div class='form'>
-                      <h3>You are registered successfully.</h3><br/>
-                      <p class='link'>Click here to <a href='login.php'>Login</a></p>
-                      </div>";
-            } else {
-                echo "<div class='form'>
-                      <h3>Failed to register. Please try again.</h3><br/>
-                      <p class='link'>Click here to <a href='registration.php'>registration</a> again.</p>
-                      </div>";
-            }
+        $query = "INSERT into `felhasznalo` (felh_nev, password, email, admin, create_datetime)
+                  VALUES ('$felh_nev', '$hashed_password', '$email', $admin, '$create_datetime')";
+        $result = mysqli_query($con, $query);
+
+        if ($result) {
+            echo "<div class='form'>
+                  <h3>Sikeresen reisztráltál!</h3><br/>
+                  <p class='link'>Kattints ide, hogy <a href='login.php'>Bejelentkezz!</a></p>
+                  </div>";
         } else {
             echo "<div class='form'>
-                  <h3>Passwords do not match. Please try again.</h3><br/>
-                  <p class='link'>Click here to <a href='registration.php'>registration</a> again.</p>
+                  <h3>Hiba lépett fel a regisztráció során.</h3><br/>
+                  <p class='link'>Kattints ide, hogy <a href='registration.php'>Regisztrálj!</a> újra.</p>
                   </div>";
         }
-        else {
+    } else {
+        echo "<div class='form'>
+              <h3>A jelszavak nem egyeznek</h3><br/>
+              <p class='link'>Kattints ide, hogy <a href='registration.php'>Regisztrálj!</a> újra.</p>
+              </div>";
+    }
+} else {
 ?>
     <form class="form" action="" method="post">
-        <h1 class="login-title">Registration</h1>
+        <h1 class="login-title">Regisztráció</h1>
         <input type="text" class="login-input" name="username" placeholder="Username" required />
         <input type="text" class="login-input" name="email" placeholder="Email Address">
         <input type="password" class="login-input" name="password" placeholder="Password" required />
         <input type="password" class="login-input" name="confirm_password" placeholder="Confirm Password" required />
+        <label for="admin">Regisztráció adminként</label>
+        <input type="checkbox" name="admin" id="admin" value="1">
         <input type="submit" name="submit" value="Register" class="login-button">
-        <p class="link"><a href="login.php">Click to Login</a></p>
+        <p class="link"><a href="login.php">Jelentkezz be!</a></p>
     </form>
-<?php
-    }
+<?php } 
+
 ?>
 </body>
 </html>
