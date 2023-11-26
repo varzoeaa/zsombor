@@ -12,6 +12,7 @@
 require('db_connect.php');
 
 if (isset($_POST['submit'])) {
+    // Backend registration logic
     $felh_nev = stripslashes($_POST['username']);
     $felh_nev = mysqli_real_escape_string($con, $felh_nev);
     $email    = stripslashes($_POST['email']);
@@ -21,12 +22,9 @@ if (isset($_POST['submit'])) {
     $confirm_password = stripslashes($_POST['confirm_password']);
     $confirm_password = mysqli_real_escape_string($con, $confirm_password);
 
-    // megnézi, hogy matchelnek-e a jelszavak
     if ($password == $confirm_password) {
         $create_datetime = date("Y-m-d H:i:s");
         $hashed_password = md5($password);
-
-        // megnézi, hogy a checkbox rendben van-e
         $admin = isset($_POST['admin']) ? 1 : 0;
 
         $query = "INSERT into `felhasznalo` (felh_nev, password, email, admin, create_datetime)
@@ -50,26 +48,21 @@ if (isset($_POST['submit'])) {
               <p class='link'>Kattints ide, hogy <a href='registration.php'>Regisztrálj!</a> újra.</p>
               </div>";
     }
-} else {
+} 
 ?>
 
+<!-- Frontend registration form -->
+<form class="form" action="" method="post">
+    <h1 class="login-title">Regisztráció</h1>
+    <input type="text" class="login-input" name="username" placeholder="Username" required />
+    <input type="text" class="login-input" name="email" placeholder="Email Address">
+    <input type="password" class="login-input" name="password" placeholder="Password" required />
+    <input type="password" class="login-input" name="confirm_password" placeholder="Confirm Password" required />
+    <label for="admin">Regisztráció adminként</label>
+    <input type="checkbox" name="admin" id="admin" value="1">
+    <input type="submit" name="submit" value="Register" class="login-button">
+    <p class="link"><a href="login.php">Jelentkezz be!</a></p>
+</form>
 
-// innentől frontend
-
-
-    <form class="form" action="" method="post">
-        <h1 class="login-title">Regisztráció</h1>
-        <input type="text" class="login-input" name="username" placeholder="Username" required />
-        <input type="text" class="login-input" name="email" placeholder="Email Address">
-        <input type="password" class="login-input" name="password" placeholder="Password" required />
-        <input type="password" class="login-input" name="confirm_password" placeholder="Confirm Password" required />
-        <label for="admin">Regisztráció adminként</label>
-        <input type="checkbox" name="admin" id="admin" value="1">
-        <input type="submit" name="submit" value="Register" class="login-button">
-        <p class="link"><a href="login.php">Jelentkezz be!</a></p>
-    </form>
-<?php } 
-
-?>
 </body>
 </html>
